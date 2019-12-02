@@ -8,7 +8,8 @@
   },
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "amd": true
   },
   "rules": {
     "eqeqeq": ["error", "always"],
@@ -33,6 +34,7 @@
       }
     ],
     "semi": [2, "always"],
-    "eol-last": "error"
+    "eol-last": 0
   }
+
 }
