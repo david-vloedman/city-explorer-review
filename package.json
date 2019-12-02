@@ -1,0 +1,25 @@
+{
+  "name": "city-explorer-review",
+  "version": "1.0.0",
+  "description": "A recreation of the City Explorer project from Code 301, DevStation.",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/david-vloedman/city-explorer-review.git"
+  },
+  "author": "David Vloedman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/david-vloedman/city-explorer-review/issues"
+  },
+  "homepage": "https://github.com/david-vloedman/city-explorer-review#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "pg": "^7.14.0",
+    "superagent": "^5.1.2"
+  }
+}
