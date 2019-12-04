@@ -6,6 +6,8 @@ const superagent = require('superagent');
 const pg = require('pg');
 const cors = require('cors');
 
+const getWeather = require('./weather.js');
+
 
 const PORT = process.env.PORT || 3000;
 const server = express();
@@ -33,26 +35,7 @@ const getGeocode = (request, response) => {
   }).catch(err => console.error(err));
 };
 
-const getWeather = (request, response) => {
-  const {
-    longitude,
-    latitude
-  } = request.query.data;
 
-  const url = `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${latitude},${longitude}`;
-
-  return requestWeather(url, response);
-};
-
-const requestWeather = (url, response) => {
-  return superagent.get(url).then(result => {
-    const darksky = result.body.daily.data;
-    const dailyWeather = darksky.map(day => {
-      return new Weather(day);
-    });
-    response.status(200).send(dailyWeather);
-  });
-};
 
 const getRestaurant = (request, response) => {
   const location = request.query.data.formatted_query;
@@ -92,11 +75,7 @@ function LocationGeo(data) {
   this.latitude = data.geometry.location.lat;
 }
 
-function Weather(data) {
-  this.forecast = data.summary;
-  this.time = new Date(data.time * 1000).toDateString();
-  this.created_at = Date.now();
-}
+
 
 function Restaurant(data) {
   this.name = data.name;
@@ -112,5 +91,5 @@ function Restaurant(data) {
 //    START SERVER
 // 
 // **************************************************************************
-
+client.query('select * from locations').then(result => console.log(result));
 server.listen(PORT, () => console.log(`Server listening on ${PORT}`));
