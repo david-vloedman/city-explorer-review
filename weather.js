@@ -2,7 +2,7 @@
 
 const superagent = require('superagent');
 
-
+const cache = require('./cacheManager');
 
 
 // **************************************************************************
@@ -22,15 +22,24 @@ function Weather(data) {
 const getWeather = (request, response) => {
   const {
     longitude,
-    latitude
+    latitude,
+    id
   } = request.query.data;
 
-  const url = `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${latitude},${longitude}`;
+  console.log(id);
 
-  return requestWeather(url, response);
+  cache.lookup('weather', 1).then(result => {
+    console.log(result.rowCount);
+  });
+
+
+  return requestWeatherAPI(latitude, longitude, response);
+
 };
 
-const requestWeather = (url, response) => {
+const requestWeatherAPI = (lat, lng, response) => {
+  const url = `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${lng}`;
+
   return superagent.get(url).then(result => {
     const darksky = result.body.daily.data;
     const dailyWeather = darksky.map(day => {

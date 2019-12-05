@@ -14,7 +14,7 @@ const cacheManager = (function () {
   const data_experations = {
     weather: () => {
       const exp = new Date();
-      exp.setDate(exp.getDate() - 1);
+      exp.setDate(exp.getDate() + 1);
       return exp;
     }
 
@@ -36,7 +36,6 @@ const cacheManager = (function () {
     return values.toString();
   }
 
-
   function saveToCache(table, data) {
     const SQL = SQLinsert(table, data.length);
     client.query(SQL, data);
@@ -48,9 +47,6 @@ const cacheManager = (function () {
     return client.query(SQL, values);
   }
 
-
-
-
   return {
     exp: data_experations,
     save: saveToCache,
@@ -58,8 +54,4 @@ const cacheManager = (function () {
   };
 })();
 
-const table = 'weather';
-const data = ['sunny', Date.now(), Date.now(), 1];
-
-
-console.log(cacheManager.exp['weather']());
+module.exports = cacheManager;

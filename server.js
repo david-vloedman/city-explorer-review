@@ -91,5 +91,5 @@ function Restaurant(data) {
 //    START SERVER
 // 
 // **************************************************************************
-client.query('select * from locations').then(result => console.log(result));
+
 server.listen(PORT, () => console.log(`Server listening on ${PORT}`));
