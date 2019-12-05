@@ -1,3 +1,4 @@
+require('dotenv').config();
 const pg = require('pg');
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
@@ -7,52 +8,58 @@ const cacheManager = (function () {
 
   const fieldSets = {
     locations: 'latitude, longitude, formatted_loc',
-    weather: 'summary, for_date, created_date, '
+    weather: 'summary, for_date, created_date, location_id'
   };
 
+  const data_experations = {
+    weather: () => {
+      const exp = new Date();
+      exp.setDate(exp.getDate() - 1);
+      return exp;
+    }
 
+  };
 
-  function insert(table) {
-    return `insert into ${table} (${fieldSets[table]})`;
+  function SQLselect(table) {
+    return `select * from ${table} where location_id=$1`;
+  }
+
+  function SQLinsert(table, valueCount) {
+    return `insert into ${table} (${fieldSets[table]}) values (${createValueString(valueCount)})`;
   }
 
   function createValueString(count) {
     let values = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 1; i <= count; i++) {
       values.push(`$${i}`);
     }
     return values.toString();
   }
 
 
-  function isCached() {
-
-  }
-
   function saveToCache(table, data) {
-    const values = createValueString(data.length);
-    const SQL = `${insert(table)} values (${values}) returning *`;
-    console.log(SQL);
+    const SQL = SQLinsert(table, data.length);
     client.query(SQL, data);
   }
 
-  function validateCache() {
-
+  function lookup(table, id) {
+    const SQL = SQLselect(table);
+    const values = [id];
+    return client.query(SQL, values);
   }
 
+
+
+
   return {
-    isCached: isCached,
+    exp: data_experations,
     save: saveToCache,
-    validate: validateCache,
-    values: createValueString
+    lookup: lookup,
   };
 })();
 
+const table = 'weather';
+const data = ['sunny', Date.now(), Date.now(), 1];
 
-const tableName = 'locations';
-const fieldData = [12.23441, 45.3224, 'Bend, OR'];
-//cacheManager.save(tableName, fieldData);
 
-let query = 'insert into locations (latitude, longitude, formatted_loc) values (12, 45, \'Portland\') returning *';
-
-client.query('select * from locations');
+console.log(cacheManager.exp['weather']());
