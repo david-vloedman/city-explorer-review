@@ -23,13 +23,13 @@ const getWeather = (request, response) => {
   const {
     longitude,
     latitude,
-    id
+
   } = request.query.data;
 
-  console.log(id);
+
 
   cache.lookup('weather', 1).then(result => {
-    console.log(result.rowCount);
+
   });
 
 

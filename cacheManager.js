@@ -25,7 +25,7 @@ const cacheManager = (function () {
   }
 
   function SQLinsert(table, valueCount) {
-    return `insert into ${table} (${fieldSets[table]}) values (${createValueString(valueCount)})`;
+    return `insert into ${table} (${fieldSets[table]}) values (${createValueString(valueCount)}) returning *`;
   }
 
   function createValueString(count) {
@@ -37,9 +37,18 @@ const cacheManager = (function () {
   }
 
   function saveToCache(table, data) {
-    const SQL = SQLinsert(table, data.length);
-    client.query(SQL, data);
+    const values = Object.values(data);
+    const SQL = SQLinsert(table, values.length);
+
+    return client.query(SQL, values)
+      .then(result => {
+
+        return result.rows;
+      });
+
+
   }
+
 
   function lookup(table, id) {
     const SQL = SQLselect(table);
@@ -47,10 +56,25 @@ const cacheManager = (function () {
     return client.query(SQL, values);
   }
 
+  function lookupLocation(query) {
+    const SQL = `select * from locations where formatted_loc=$1`;
+    const values = [query];
+    return client.query(SQL, values)
+      .then(results => {
+        return results.rowCount === 0 ? null : results.rows[0];
+      });
+  }
+
+
+  function isExpired(date, table) {
+    return date <= data_experations[table]();
+  }
+
   return {
-    exp: data_experations,
     save: saveToCache,
     lookup: lookup,
+    isExpired: isExpired,
+    lookupLocation: lookupLocation
   };
 })();
 
