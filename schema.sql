@@ -19,3 +19,14 @@ create table weather (
   foreign key (location_id) references locations (id)
 );
 
+
+create table restarant (
+  id serial primary key,
+  rest_name varchar(255),
+  rating decimal,  
+  rest_url text,
+  image_url text,
+  created_at bigint,
+  location_id integer not null,
+  foreign key (location_id) reference locations (id)
+);

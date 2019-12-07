@@ -14,16 +14,16 @@ function Location(data) {
 }
 
 function getGeocode(request, response) {
-  const locationHandler = {
+  const handler = {
     query: request.query.data,
     cacheHit: results => response.send(results.rows[0]),
     cacheMiss: () => {
-      Location.fetchLocation(request.query.data).then(data =>
+      Location.fetchLocation(query).then(data =>
         response.send(data)
       );
     }
   };
-  Location.lookup(locationHandler);
+  Location.lookup(handler);
 }
 
 Location.fetchLocation = function (query) {
