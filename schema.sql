@@ -7,7 +7,7 @@ create table locations (
   id serial primary key,
   latitude numeric(10, 7),
   longitude numeric(10, 7),  
-  formatted_loc varchar(255)
+  formatted_address varchar(255)
 );
 
 create table weather (
