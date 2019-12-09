@@ -4,10 +4,10 @@ const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 client.on('err', err => console.error(err));
 
-const cacheManager = (function () {
+const sqlQuery = (function () {
 
   const fieldSets = {
-    locations: 'latitude, longitude, formatted_loc',
+    locations: 'longitude, latitude, formatted_query, search_query',
     weather: 'summary, for_date, created_date, location_id'
   };
 
@@ -36,34 +36,33 @@ const cacheManager = (function () {
     return values.toString();
   }
 
-  function saveToCache(table, data) {
-    const values = Object.values(data);
-    const SQL = SQLinsert(table, values.length);
+  // function saveToCache(table, data) {
+  //   const values = Object.values(data);
+  //   const SQL = SQLinsert(table, values.length);
 
-    return client.query(SQL, values)
-      .then(result => {
+  //   return client.query(SQL, values)
+  //     .then(result => {
 
-        return result.rows;
-      });
-
-
-  }
+  //       return result.rows;
+  //     });
 
 
-  function lookup(table, id) {
-    const SQL = SQLselect(table);
-    const values = [id];
-    return client.query(SQL, values);
-  }
+  // }
 
-  function lookupLocation(query) {
-    const SQL = `select * from locations where formatted_loc=$1`;
-    const values = [query];
-    return client.query(SQL, values)
-      .then(results => {
-        return results.rowCount === 0 ? null : results.rows[0];
-      });
-  }
+  // function lookup(table, id) {
+  //   const SQL = SQLselect(table);
+  //   const values = [id];
+  //   return client.query(SQL, values);
+  // }
+
+  // function lookupLocation(query) {
+  //   const SQL = `select * from locations where formatted_loc=$1`;
+  //   const values = [query];
+  //   return client.query(SQL, values)
+  //     .then(results => {
+  //       return results.rowCount === 0 ? null : results.rows[0];
+  //     });
+  // }
 
 
   function isExpired(date, table) {
@@ -71,11 +70,11 @@ const cacheManager = (function () {
   }
 
   return {
-    save: saveToCache,
-    lookup: lookup,
+    insert: SQLinsert,
+    select: SQLselect,
     isExpired: isExpired,
-    lookupLocation: lookupLocation
+
   };
 })();
 
-module.exports = cacheManager;
+module.exports = sqlQuery;

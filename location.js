@@ -2,23 +2,25 @@
 
 const superagent = require('superagent');
 const pg = require('pg');
-//const cache = require('./cacheManager');
+const sqlQuery = require('./sqlQuery');
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
 client.on('err', err => console.error(err));
 
-function Location(data) {
+function Location(data, query) {
   this.longitude = data.geometry.location.lng;
   this.latitude = data.geometry.location.lat;
-  this.formatted_address = data.formatted_address;
+  this.formatted_query = data.formatted_address;
+  this.search_query = query;
 }
 
 function getGeocode(request, response) {
   const handler = {
     query: request.query.data,
-    cacheHit: results => response.send(results.rows[0]),
+    cacheHit: results => response.send(results),
     cacheMiss: () => {
-      Location.fetchLocation(query).then(data =>
+      Location.fetchLocation(request.query.data).then(data =>
+
         response.send(data)
       );
     }
@@ -30,12 +32,12 @@ Location.fetchLocation = function (query) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${query}&key=${process.env.GEOCODE_API_KEY}`;
 
   return superagent.get(url).then(result => {
-    if (!result.body.results.length) {
-      throw 'No data';
-    }
-    let location = new Location(result.body.results[0]);
+    if (!result.body.results.length) throw 'No data';
+
+    let location = new Location(result.body.results[0], query);
     return location.save().then(result => {
       location.id = result.rows[0].id;
+      console.log(location);
       return location;
     });
   });
@@ -44,26 +46,17 @@ Location.fetchLocation = function (query) {
 
 
 Location.prototype.save = function () {
-  const SQL = `INSERT INTO locations(latitude, longitude, formatted_address)
-  VALUES($1, $2, $3)
-  RETURNING id`;
   const values = Object.values(this);
+  const SQL = sqlQuery.insert('locations', values.length);
   return client.query(SQL, values);
 };
 
 Location.lookup = handler => {
-  const SQL = `SELECT * FROM locations WHERE formatted_address=$1`;
+  const SQL = `SELECT * FROM locations WHERE search_query=$1`;
   const values = [handler.query];
-
   return client
     .query(SQL, values)
-    .then(results => {
-      if (results.rowCount > 0) {
-        handler.cacheHit(results);
-      } else {
-        handler.cacheMiss();
-      }
-    })
+    .then(results => results.rowCount > 0 ? handler.cacheHit(results.rows[0]) : handler.cacheMiss())
     .catch(console.error);
 };
 

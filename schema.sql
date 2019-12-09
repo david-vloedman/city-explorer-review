@@ -1,13 +1,16 @@
 
+
 drop table if exists weather;
+drop table if exists restarant;
 drop table if exists locations;
 
 
 create table locations (
-  id serial primary key,
-  latitude numeric(10, 7),
-  longitude numeric(10, 7),  
-  formatted_address varchar(255)
+  id serial primary key,  
+  longitude numeric(10, 7), 
+  latitude numeric(10, 7),   
+  formatted_query varchar(255),
+  search_query varchar(255)
 );
 
 create table weather (
@@ -28,5 +31,5 @@ create table restarant (
   image_url text,
   created_at bigint,
   location_id integer not null,
-  foreign key (location_id) reference locations (id)
+  foreign key (location_id) references locations (id)
 );

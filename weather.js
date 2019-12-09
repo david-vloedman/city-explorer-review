@@ -1,8 +1,9 @@
 'using stric';
 
 const superagent = require('superagent');
-
-const cache = require('./cacheManager');
+const sqlQuery = require('./sqlQuery');
+const pg = require('pg');
+const client = new pg.Client(process.env.DATABASE_URL);
 
 
 // **************************************************************************
@@ -11,30 +12,25 @@ const cache = require('./cacheManager');
 // 
 // **************************************************************************
 
-function Weather(data) {
+function Weather(data, location_id) {
   this.forecast = data.summary;
   this.time = new Date(data.time * 1000).toDateString();
   this.created_at = Date.now();
+  this.location_id = location_id;
 }
 
+Weather.prototype.save = function () {
+  const values = Object.values(this);
+  const SQL = sqlQuery.insert('weather', values.length);
 
+};
 
 const getWeather = (request, response) => {
   const {
     longitude,
     latitude,
-
   } = request.query.data;
-
-
-
-  cache.lookup('weather', 1).then(result => {
-
-  });
-
-
   return requestWeatherAPI(latitude, longitude, response);
-
 };
 
 const requestWeatherAPI = (lat, lng, response) => {
