@@ -46,7 +46,7 @@ server.get('/location', getLocation);
 
 server.get('/weather', getWeather);
 
-server.get('/yelp', getRestaurant);
+//server.get('/yelp', getRestaurant);
 
 server.use('*', notFoundHandler);
 

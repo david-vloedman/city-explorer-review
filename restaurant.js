@@ -21,7 +21,7 @@ Restaurant.prototype.save = function () {
   return client.query(SQL, values);
 };
 
-Restaurant.lookup = handler => {
+Restaurant.lookup = (handler) => {
   const SQL = `select * from restuarants where location_id=$1`;
   const values = [handler.id];
 
@@ -55,10 +55,11 @@ const getRestaurant = (request, response) => {
     loc_id: request.query.data.id,
     cacheHit: results => response.send(results),
     cacheMiss: () => {
-      Restaurant.fetch(location).then()
+      Restaurant.fetch(location).then(data => response.send(data));
     }
-  }
+  };
 
+  Restaurant.lookup(handler);
 
 };
 
