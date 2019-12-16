@@ -8,7 +8,8 @@ const sqlQuery = (function () {
 
   const fieldSets = {
     locations: 'longitude, latitude, formatted_query, search_query',
-    weather: 'summary, for_date, created_date, location_id'
+    weather: 'summary, for_date, created_date, location_id',
+    restaurant: 'name, rating, price, rest_url, image_url, created_at, location_id'
   };
 
   const data_experations = {
@@ -36,35 +37,6 @@ const sqlQuery = (function () {
     return values.toString();
   }
 
-  // function saveToCache(table, data) {
-  //   const values = Object.values(data);
-  //   const SQL = SQLinsert(table, values.length);
-
-  //   return client.query(SQL, values)
-  //     .then(result => {
-
-  //       return result.rows;
-  //     });
-
-
-  // }
-
-  // function lookup(table, id) {
-  //   const SQL = SQLselect(table);
-  //   const values = [id];
-  //   return client.query(SQL, values);
-  // }
-
-  // function lookupLocation(query) {
-  //   const SQL = `select * from locations where formatted_loc=$1`;
-  //   const values = [query];
-  //   return client.query(SQL, values)
-  //     .then(results => {
-  //       return results.rowCount === 0 ? null : results.rows[0];
-  //     });
-  // }
-
-
   function isExpired(date, table) {
     return date <= data_experations[table]();
   }
@@ -73,7 +45,6 @@ const sqlQuery = (function () {
     insert: SQLinsert,
     select: SQLselect,
     isExpired: isExpired,
-
   };
 })();
 

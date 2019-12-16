@@ -34,10 +34,10 @@ Location.fetchLocation = function (query) {
   return superagent.get(url).then(result => {
     if (!result.body.results.length) throw 'No data';
 
-    let location = new Location(result.body.results[0], query);
+    const location = new Location(result.body.results[0], query);
     return location.save().then(result => {
       location.id = result.rows[0].id;
-      console.log(location);
+
       return location;
     });
   });

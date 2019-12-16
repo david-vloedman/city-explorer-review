@@ -30,10 +30,6 @@ function notFoundHandler(request, response) {
   response.status(404).send('This page cannot be found');
 }
 
-function errorHandler(error, request, response) {
-  response.status(500).send(error);
-}
-
 
 // **************************************************************************
 // 
