@@ -30,10 +30,6 @@ function notFoundHandler(request, response) {
   response.status(404).send('This page cannot be found');
 }
 
-function errorHandler(error, request, response) {
-  response.status(500).send(error);
-}
-
 
 // **************************************************************************
 // 
@@ -46,7 +42,7 @@ server.get('/location', getLocation);
 
 server.get('/weather', getWeather);
 
-//server.get('/yelp', getRestaurant);
+server.get('/yelp', getRestaurant);
 
 server.use('*', notFoundHandler);
 

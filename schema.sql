@@ -1,7 +1,7 @@
 
 
 drop table if exists weather;
-drop table if exists restarant;
+drop table if exists restaurant;
 drop table if exists locations;
 
 
@@ -23,10 +23,11 @@ create table weather (
 );
 
 
-create table restarant (
+create table restaurant (
   id serial primary key,
-  rest_name varchar(255),
+  name varchar(255),
   rating decimal,  
+  price varchar(255),
   rest_url text,
   image_url text,
   created_at bigint,

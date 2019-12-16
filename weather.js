@@ -32,22 +32,26 @@ Weather.prototype.save = function () {
   return client.query(SQL, values);
 };
 
-Weather.fetchWeather = (lat, lng, id) => {
+Weather.fetch = (lat, lng, id) => {
   const url = `https://api.darksky.net/forecast/${process.env.WEATHER_API_KEY}/${lat},${lng}`;
 
-  return superagent.get(url).then(result => {
-    const darksky = result.body.daily.data;
-    const dailyWeather = darksky.map(day => {
-      const weather = new Weather(day, id);
-      weather.save();
-      return weather;
-    });
-    return dailyWeather;
-  });
+  return superagent.get(url)
+    .then(result => {
+      const darksky = result.body.daily.data;
+      const dailyWeather = darksky.map(day => {
+        const weather = new Weather(day, id);
+        weather.save();
+        return weather;
+      });
+
+      return dailyWeather;
+    })
+    .catch(error => console.error(error));
 };
 
 
 Weather.lookup = (handler, id) => {
+
   const SQL = sqlQuery.select('weather');
   const values = [id];
   return client
@@ -66,7 +70,6 @@ Weather.lookup = (handler, id) => {
 
 
 const getWeather = (request, response) => {
-
   const {
     id,
     longitude,
@@ -77,7 +80,7 @@ const getWeather = (request, response) => {
 
     cacheHit: results => response.send(results),
     cacheMiss: () => {
-      Weather.fetchWeather(latitude, longitude, id)
+      Weather.fetch(latitude, longitude, id)
         .then(data => {
           response.send(data);
         });
