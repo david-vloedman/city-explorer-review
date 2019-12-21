@@ -9,6 +9,7 @@ const cors = require('cors');
 const getWeather = require('./weather.js');
 const getLocation = require('./location.js');
 const getRestaurant = require('./restaurant.js');
+const getMovies = require('./movie.js');
 
 
 const PORT = process.env.PORT || 3000;
@@ -43,6 +44,8 @@ server.get('/location', getLocation);
 server.get('/weather', getWeather);
 
 server.get('/yelp', getRestaurant);
+
+server.get('/movies', getMovies);
 
 server.use('*', notFoundHandler);
 

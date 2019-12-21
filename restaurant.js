@@ -69,7 +69,6 @@ const getRestaurant = (request, response) => {
   const handler = {
     id: request.query.data.id,
     cacheHit: results => {
-      console.log('hit cache', results.rows);
       response.send(results.rows);
     },
     cacheMiss: () => {
