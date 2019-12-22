@@ -55,8 +55,9 @@ Movie.fetch = query => {
 
 
 Movie.lookup = handler => {
-  const SQL = `SELECT * FROM movies WHERE location_id=$1`;
   const values = [handler.location];
+  const SQL = sqlQuery.select('movies', values.length);
+
 
   return client
     .query(SQL, values)

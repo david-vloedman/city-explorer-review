@@ -62,6 +62,6 @@ CREATE TABLE trail (
   conditions TEXT,
   condition_date VARCHAR(255),
   condition_time VARCHAR(255),
-  created VARCHAR(255),
+  created_at VARCHAR(255),
   location_id INTEGER NOT NULL REFERENCES locations(id)
 );
