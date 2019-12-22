@@ -10,7 +10,8 @@ const sqlQuery = (function () {
     locations: 'longitude, latitude, formatted_query, search_query',
     weather: 'summary, for_date, created_date, location_id',
     restaurant: 'name, rating, price, rest_url, image_url, created_at, location_id',
-    movies: 'title, overview, average_votes, total_votes, image_url, popularity, released_on, created_at, location_id'
+    movies: 'title, overview, average_votes, total_votes, image_url, popularity, released_on, created_at, location_id',
+    trails: 'name, location, length, stars, star_votes, summary, trail_url, conditions, condition_date, condition_time, created, location_id'
   };
 
   const data_experations = {
