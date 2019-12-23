@@ -2,6 +2,7 @@
 
 const superagent = require('superagent');
 const sqlQuery = require('./sqlQuery');
+const validateCache = require('./validateCache');
 const pg = require('pg');
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect();
@@ -57,7 +58,19 @@ Weather.lookup = (handler, id) => {
   return client
     .query(SQL, values)
     .then(results => {
-      results.rowCount > 0 ? handler.cacheHit(results.rows[0]) : handler.cacheMiss();
+      if (results.rowCount > 0) {
+        const created = results.rows[0].created_at;
+        if (validateCache.isExpired(created, 'weather')) {
+          const id =
+            client.query()
+        } else {
+          handler.cacheHit(results.rows);
+        }
+
+      } else {
+        handler.cacheMiss();
+      }
+
     })
     .catch(error => console.error(error));
 };
@@ -77,8 +90,9 @@ const getWeather = (request, response) => {
   } = request.query.data;
 
   const handler = {
-
-    cacheHit: results => response.send(results),
+    cacheHit: results => {
+      response.send(results);
+    },
     cacheMiss: () => {
       Weather.fetch(latitude, longitude, id)
         .then(data => {

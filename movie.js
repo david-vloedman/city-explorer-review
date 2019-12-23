@@ -81,7 +81,9 @@ function getMovies(request, response) {
       response.send(results.rows);
     },
     cacheMiss: () => {
-      Movie.fetch(request.query).then(data => response.send(data));
+      Movie.fetch(request.query).then(data => {
+        response.send(data);
+      });
     }
   };
   Movie.lookup(movieHandler);

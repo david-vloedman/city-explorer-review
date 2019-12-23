@@ -16,9 +16,9 @@ create table locations (
 
 create table weather (
   id serial primary key,
-  summary text,
-  for_date varchar(255),
-  created_date bigint,
+  forecast text,
+  time varchar(255),
+  created_at bigint,
   location_id integer not null,
   foreign key (location_id) references locations (id)
 );
